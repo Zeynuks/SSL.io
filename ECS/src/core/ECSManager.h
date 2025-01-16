@@ -1,0 +1,185 @@
+#pragma once
+
+#include <queue>
+#include <stdexcept>
+#include <unordered_map>
+#include <memory>
+
+#include "Types.h"
+#include "ComponentArray.h"
+/// TODO: декомпозировать класс
+namespace ECS
+{
+    class ECSManager
+    {
+        // Entity management
+        std::queue<EntityID> m_availableEntities;
+        std::unordered_map<EntityID, ComponentMask> m_entitiesSignatures;
+        EntityID m_nextEntityId = 0;
+
+        // Component management
+        std::unordered_map<TypeID, ComponentID> m_componentTypes;
+        std::unordered_map<ComponentID, std::unique_ptr<IComponentArray>> m_componentArrays;
+
+        template<typename ComponentType>
+        ComponentArray<ComponentType>* GetArray(ComponentID id)
+        {
+            auto it = m_componentArrays.find(id);
+            return (it != m_componentArrays.end() && it->second)
+                ? static_cast<ComponentArray<ComponentType>*>(it->second.get())
+                : nullptr;
+        }
+
+        template<typename ComponentType>
+        void CreateArray(TypeID typeIndex)
+        {
+            ComponentID id = m_componentTypes.size();
+            m_componentTypes[typeIndex] = id;
+            m_componentArrays[id] = std::make_unique<ComponentArray<ComponentType>>();
+        }
+
+    public:
+        // Entity methods
+        EntityID CreateEntity()
+        {
+            EntityID entity;
+            if (m_availableEntities.empty())
+            {
+                entity = m_nextEntityId++;
+                m_availableEntities.push(entity);
+            }
+            else
+            {
+                entity = m_availableEntities.front();
+                m_availableEntities.pop();
+            }
+            m_entitiesSignatures[entity] = ComponentMask();
+            return entity;
+        }
+
+        void DestroyEntity(EntityID entity)
+        {
+            if (m_entitiesSignatures.find(entity) == m_entitiesSignatures.end())
+            {
+                throw std::runtime_error("Attempted to destroy non-existent entity.");
+            }
+            m_entitiesSignatures.erase(entity);
+            m_availableEntities.push(entity);
+        }
+
+        void SetSignature(EntityID entity, ComponentMask signature)
+        {
+            if (m_entitiesSignatures.find(entity) == m_entitiesSignatures.end())
+            {
+                throw std::runtime_error("Attempted to set a signature for a non-existent entity.");
+            }
+            m_entitiesSignatures[entity] = signature;
+        }
+
+        const ComponentMask& GetSignature(EntityID entity) const
+        {
+            auto it = m_entitiesSignatures.find(entity);
+            if (it == m_entitiesSignatures.end())
+            {
+                throw std::runtime_error("Attempted to get a signature for a non-existent entity.");
+            }
+            return it->second;
+        }
+
+        // Component methods
+        template<typename ComponentType>
+        void RegisterComponent()
+        {
+            TypeID typeIndex = std::type_index(typeid(ComponentType));
+            if (m_componentTypes.find(typeIndex) != m_componentTypes.end())
+            {
+                throw std::runtime_error("Component is already registered.");
+            }
+            CreateArray<ComponentType>(typeIndex);
+        }
+
+        template<typename ComponentType>
+        void AddComponent(EntityID entity, ComponentType component)
+        {
+            TypeID typeIndex = std::type_index(typeid(ComponentType));
+            if (m_componentTypes.find(typeIndex) == m_componentTypes.end())
+            {
+                throw std::runtime_error("Component is not registered.");
+            }
+            ComponentID id = m_componentTypes[typeIndex];
+            auto componentArray = GetArray<ComponentType>(id);
+            if (!componentArray) {
+                throw std::runtime_error("Component array is not initialized.");
+            }
+            componentArray->Add(entity, component);
+            
+            ComponentMask& entityMask = m_entitiesSignatures[entity];
+            entityMask.set(id);
+        }
+
+        template<typename ComponentType>
+        void RemoveComponent(EntityID entity)
+        {
+            TypeID typeIndex = std::type_index(typeid(ComponentType));
+            if (m_componentTypes.find(typeIndex) == m_componentTypes.end())
+            {
+                throw std::runtime_error("Component is not registered.");
+            }
+            ComponentID id = m_componentTypes[typeIndex];
+            auto componentArray = GetArray<ComponentType>(id);
+            if (!componentArray) {
+                throw std::runtime_error("Component array is not initialized.");
+            }
+            componentArray->Remove(entity);
+
+            ComponentMask& entityMask = m_entitiesSignatures[entity];
+            entityMask.reset(id);
+        }
+
+        template<typename ComponentType>
+        ComponentType* GetComponent(EntityID entity)
+        {
+            TypeID typeIndex = std::type_index(typeid(ComponentType));
+            if (m_componentTypes.find(typeIndex) == m_componentTypes.end())
+            {
+                throw std::runtime_error("Component is not registered.");
+            }
+            ComponentID id = m_componentTypes[typeIndex];
+            auto componentArray = GetArray<ComponentType>(id);
+            if (!componentArray) {
+                throw std::runtime_error("Component array is not initialized.");
+            }
+            return componentArray->Get(entity);
+        }
+
+        template<typename ComponentType>
+        ComponentID GetComponentID()
+        {
+            TypeID typeIndex = std::type_index(typeid(ComponentType));
+            auto it = m_componentTypes.find(typeIndex);
+            if (it == m_componentTypes.end())
+            {
+                throw std::runtime_error("Component is not registered.");
+            }
+            return it->second;
+        }
+
+        template<typename... Components>
+        std::vector<EntityID> GetEntitiesWith()
+        {
+            ComponentMask requiredMask;
+            (requiredMask.set(m_componentTypes[std::type_index(typeid(Components))]), ...);
+
+            std::vector<EntityID> matchingEntities;
+            for (const auto& [entity, signature] : m_entitiesSignatures)
+            {
+                if ((signature & requiredMask) == requiredMask)
+                {
+                    matchingEntities.push_back(entity);
+                }
+            }
+
+            return matchingEntities;
+        }
+    };
+} //namespace ECS
