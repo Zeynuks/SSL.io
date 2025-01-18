@@ -9,7 +9,7 @@
 #include <functional>
 
 #include "Types.h"
-#include "SystemManager.h"
+#include "SystemManager.hpp"
 
 namespace ECS
 {

@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 
-#include "System.h"
+#include "System.hpp"
 
 namespace ECS
 {

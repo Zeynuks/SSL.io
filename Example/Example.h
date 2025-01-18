@@ -2,7 +2,7 @@
 
 #include <conio.h>
 #include <iostream>
-#include "../ECS/Engine.h"
+#include "../ECS/Engine.hpp"
 
 struct Transform { int x = 0, y = 0; };
 

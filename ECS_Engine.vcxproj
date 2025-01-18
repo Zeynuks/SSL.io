@@ -134,14 +134,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ECS\src\core\ECSManager.h" />
-    <ClInclude Include="ECS\src\core\ComponentArray.h" />
-    <ClInclude Include="ECS\Engine.h" />
-    <ClInclude Include="ECS\src\core\System.h" />
-    <ClInclude Include="ECS\src\core\SystemManager.h" />
-    <ClInclude Include="ECS\src\core\EventBus.h" />
+    <ClInclude Include="ECS\src\core\ECSManager.hpp" />
+    <ClInclude Include="ECS\src\core\ComponentArray.hpp" />
+    <ClInclude Include="ECS\Engine.hpp" />
+    <ClInclude Include="ECS\src\core\System.hpp" />
+    <ClInclude Include="ECS\src\core\SystemManager.hpp" />
+    <ClInclude Include="ECS\src\core\EventBus.hpp" />
     <ClInclude Include="Example\Example.h" />
-    <ClInclude Include="ECS\src\core\Looper.h" />
+    <ClInclude Include="ECS\src\core\Looper.hpp" />
     <ClInclude Include="ECS\src\core\Types.h" />
   </ItemGroup>
   <ItemGroup>

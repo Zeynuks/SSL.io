@@ -6,7 +6,7 @@
 #include <memory>
 
 #include "Types.h"
-#include "ComponentArray.h"
+#include "ComponentArray.hpp"
 /// TODO: декомпозировать класс
 namespace ECS
 {

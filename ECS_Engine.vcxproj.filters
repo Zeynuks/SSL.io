@@ -21,31 +21,31 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ECS\Engine.h">
+    <ClInclude Include="ECS\Engine.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\src\core\ComponentArray.h">
+    <ClInclude Include="ECS\src\core\ComponentArray.hpp">
       <Filter>Файлы заголовков\core</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\src\core\EventBus.h">
+    <ClInclude Include="ECS\src\core\EventBus.hpp">
       <Filter>Файлы заголовков\core</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\src\core\System.h">
+    <ClInclude Include="ECS\src\core\System.hpp">
       <Filter>Файлы заголовков\core</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\src\core\SystemManager.h">
+    <ClInclude Include="ECS\src\core\SystemManager.hpp">
       <Filter>Файлы заголовков\core</Filter>
     </ClInclude>
     <ClInclude Include="Example\Example.h">
       <Filter>Файлы заголовков\example</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\src\core\Looper.h">
+    <ClInclude Include="ECS\src\core\Looper.hpp">
       <Filter>Файлы заголовков\core</Filter>
     </ClInclude>
     <ClInclude Include="ECS\src\core\Types.h">
       <Filter>Файлы заголовков\core</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\src\core\ECSManager.h">
+    <ClInclude Include="ECS\src\core\ECSManager.hpp">
       <Filter>Файлы заголовков\core</Filter>
     </ClInclude>
   </ItemGroup>
