@@ -11,9 +11,9 @@ namespace ECS
 
 	public:
 		virtual ~System() = default;
-		void SetEventBus(EventBus* eventBus)
+		void SetEventBus(EventBus* bus)
 		{
-			m_eventBus = eventBus;
+			m_eventBus = bus;
 		}
 
 		virtual void Execute() = 0;

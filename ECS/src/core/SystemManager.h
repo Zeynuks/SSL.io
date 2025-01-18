@@ -13,8 +13,9 @@ namespace ECS
 		std::vector<std::shared_ptr<System>> m_systems;
 
 	public:
-		explicit SystemManager(std::shared_ptr<EventBus> eventBus = nullptr)
-			: m_eventBus(eventBus ? eventBus : std::make_shared<EventBus>()) {}
+		explicit SystemManager(std::shared_ptr<EventBus> bus = nullptr)
+			: m_eventBus(bus ? bus : std::make_shared<EventBus>()) {
+		}
 
 		template<typename SystemType, typename... Args>
 		std::shared_ptr<SystemType> AddSystem(Args&&... args)

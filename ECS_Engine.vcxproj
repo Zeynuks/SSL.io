@@ -136,9 +136,7 @@
   <ItemGroup>
     <ClInclude Include="ECS\src\core\ECSManager.h" />
     <ClInclude Include="ECS\src\core\ComponentArray.h" />
-    <ClInclude Include="ECS\src\core\ComponentManager.h" />
     <ClInclude Include="ECS\Engine.h" />
-    <ClInclude Include="ECS\src\core\EntityManager.h" />
     <ClInclude Include="ECS\src\core\System.h" />
     <ClInclude Include="ECS\src\core\SystemManager.h" />
     <ClInclude Include="ECS\src\core\EventBus.h" />

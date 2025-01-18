@@ -24,7 +24,7 @@ namespace ECS
 		{
 			if (!systemManager)
 			{
-				throw std::invalid_argument("Passing argument is nullptr. Can not create a Looper object without a single SystemManager");
+				throw std::invalid_argument("Passing argument is nullptr. Looper requires at least one SystemManager");
 			}
 
 			m_systemManagers = { std::move(systemManager) };
@@ -34,7 +34,7 @@ namespace ECS
 		{
 			if (systemManagers.empty())
 			{
-				throw std::invalid_argument("Passing argument is an empty vector. Can not create a Looper object without a single SystemManager");
+				throw std::invalid_argument("Passing argument is an empty vector. Looper requires at least one SystemManager");
 			}
 
 			m_systemManagers = systemManagers;
