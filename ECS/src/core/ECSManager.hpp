@@ -1,12 +1,13 @@
 #pragma once
 
 #include <queue>
+#include <memory>
 #include <stdexcept>
 #include <unordered_map>
-#include <memory>
 
 #include "Types.h"
 #include "ComponentArray.hpp"
+
 /// TODO: декомпозировать класс
 namespace ECS
 {
@@ -65,25 +66,6 @@ namespace ECS
 					m_entities.erase(it, m_entities.end());
 				}
 			}
-		}
-
-		void SetSignature(EntityID entity, ComponentMask signature)
-		{
-			if (m_entitiesSignatures.find(entity) == m_entitiesSignatures.end())
-			{
-				throw std::runtime_error("Attempted to set a signature for a non-existent entity.");
-			}
-			m_entitiesSignatures[entity] = signature;
-		}
-
-		const ComponentMask& GetSignature(EntityID entity) const
-		{
-			auto it = m_entitiesSignatures.find(entity);
-			if (it == m_entitiesSignatures.end())
-			{
-				throw std::runtime_error("Attempted to get a signature for a non-existent entity.");
-			}
-			return it->second;
 		}
 
 		// Component methods
@@ -150,18 +132,6 @@ namespace ECS
 				throw std::runtime_error("Component array is not initialized.");
 			}
 			return componentArray->Get(entity);
-		}
-
-		template<typename ComponentType>
-		ComponentID GetComponentID()
-		{
-			TypeID typeIndex = std::type_index(typeid(ComponentType));
-			auto it = m_componentTypes.find(typeIndex);
-			if (it == m_componentTypes.end())
-			{
-				throw std::runtime_error("Component is not registered.");
-			}
-			return it->second;
 		}
 
 		template<typename... Components>
