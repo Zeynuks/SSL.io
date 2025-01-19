@@ -1,4 +1,5 @@
 #pragma once
+
 #include <string>
 #include <vector>
 #include <typeindex>
@@ -27,6 +28,13 @@ namespace ECS2
 			m_callback = std::move(callback);
 		}
 
+		template<typename Component>
+		System& With()
+		{
+			m_filters.push_back(typeid(Component));
+			return *this;
+		}
+
 		void Execute() override
 		{
 			if (!m_callback)
@@ -41,13 +49,6 @@ namespace ECS2
 					m_callback(*entity->Get<Components>()...);
 				}
 			}
-		}
-
-		template<typename Component>
-		System& With()
-		{
-			m_filters.push_back(typeid(Component));
-			return *this;
 		}
 
 	private:
