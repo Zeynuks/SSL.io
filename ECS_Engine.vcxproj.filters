@@ -19,6 +19,9 @@
     <Filter Include="Файлы заголовков\example">
       <UniqueIdentifier>{e50208e3-4f4d-4729-84a7-acfb6af7b50c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Файлы заголовков\flecs">
+      <UniqueIdentifier>{9f594e89-7ab7-4751-9b99-025e87b3429e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ECS\Engine.hpp">
@@ -47,6 +50,21 @@
     </ClInclude>
     <ClInclude Include="ECS\src\core\ECSManager.hpp">
       <Filter>Файлы заголовков\core</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\src\flecs alike\EntityManager.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\src\flecs alike\Entity.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Example\Example2.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\src\flecs alike\SystemManager.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\src\flecs alike\System.hpp">
+      <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
