@@ -5,8 +5,8 @@
 #include <string>
 #include <functional>
 
+#include "System.hpp"
 #include "EntityManager.hpp"
-#include "ISystemManager.hpp"
 
 namespace detail
 {
@@ -25,42 +25,11 @@ namespace detail
 
 namespace ECS2
 {
-	template<typename... Components>
-	class SystemBuilder
+	class ISystemManager
 	{
 	public:
-		SystemBuilder(ISystemManager& manager, const std::string& name) : m_manager(manager), m_system(name)
-		{
-			(m_system.AddFilter(typeid(Components)), ...);
-		}
-
-		template<typename Component>
-		SystemBuilder& With()
-		{
-			m_system.AddFilter(typeid(Component));
-			return *this;
-		}
-
-		ISystemManager& Each(std::function<void(Components&...)> callback)
-		{
-			m_system.SetCallback([callback](std::vector<void*>& rawComponents)
-				{
-					if constexpr (sizeof...(Components) > 0)
-					{
-						detail::invoke_with_components<Components...>(callback, rawComponents);
-					}
-					else
-					{
-						callback();
-					}
-				});
-			m_manager.GetSystems().push_back(std::make_unique<System>(std::move(m_system)));
-			return m_manager;
-		}
-
-	private:
-		System m_system;
-		ISystemManager& m_manager;
+		virtual ~ISystemManager() = default;
+		virtual std::vector<std::unique_ptr<System>>& GetSystems() = 0;
 	};
 
 	class SystemManager : private ISystemManager
@@ -112,5 +81,43 @@ namespace ECS2
 		{
 			return m_systems;
 		}
+	};
+
+	template<typename... Components>
+	class SystemBuilder
+	{
+	public:
+		SystemBuilder(ISystemManager& manager, const std::string& name) : m_manager(manager), m_system(name)
+		{
+			(m_system.AddFilter(typeid(Components)), ...);
+		}
+
+		template<typename Component>
+		SystemBuilder& With()
+		{
+			m_system.AddFilter(typeid(Component));
+			return *this;
+		}
+
+		ISystemManager& Each(std::function<void(Components&...)> callback)
+		{
+			m_system.SetCallback([callback](std::vector<void*>& rawComponents)
+				{
+					if constexpr (sizeof...(Components) > 0)
+					{
+						detail::invoke_with_components<Components...>(callback, rawComponents);
+					}
+					else
+					{
+						callback();
+					}
+				});
+			m_manager.GetSystems().push_back(std::make_unique<System>(std::move(m_system)));
+			return m_manager;
+		}
+
+	private:
+		System m_system;
+		ISystemManager& m_manager;
 	};
 } // namespace ECS2
