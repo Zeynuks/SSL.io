@@ -4,6 +4,8 @@
 #include <vector>
 #include <typeindex>
 
+#include "Context.hpp"
+
 namespace ECS2
 {
 	class ISystem
@@ -16,7 +18,7 @@ namespace ECS2
 	class System
 	{
 	public:
-		using CallbackType = std::function<void(std::vector<void*>&)>;
+		using CallbackType = std::function<void(Context&, std::vector<void*>&)>;
 
 		System(const std::string& name) : m_name(name) {}
 

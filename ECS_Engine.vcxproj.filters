@@ -66,8 +66,8 @@
     <ClInclude Include="ECS\src\flecs alike\SystemManager.hpp">
       <Filter>Файлы заголовков\flecs</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\src\flecs alike\SystemBuilder.hpp">
-      <Filter>Файлы заголовков\flecs</Filter>
+    <ClInclude Include="ECS\src\flecs alike\Context.hpp">
+      <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

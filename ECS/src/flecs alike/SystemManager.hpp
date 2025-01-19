@@ -6,25 +6,26 @@
 #include <functional>
 
 #include "System.hpp"
+#include "Context.hpp"
 #include "EntityManager.hpp"
-
-namespace detail
-{
-	template<typename Callback, typename... Components, std::size_t... Is>
-	void invoke_with_components_impl(Callback& callback, std::vector<void*>& rawComponents, std::index_sequence<Is...>)
-	{
-		callback(*static_cast<Components*>(rawComponents[Is])...);
-	}
-
-	template<typename... Components, typename Callback>
-	void invoke_with_components(Callback& callback, std::vector<void*>& rawComponents)
-	{
-		invoke_with_components_impl<Callback, Components...>(callback, rawComponents, std::make_index_sequence<sizeof...(Components)>());
-	}
-} // namespace detail
 
 namespace ECS2
 {
+	namespace detail
+	{
+		template<typename Callback, typename... Components, std::size_t... Is>
+		void invoke_with_components_impl(Callback&& callback, Context& context, std::vector<void*>& rawComponents, std::index_sequence<Is...>)
+		{
+			std::invoke(std::forward<Callback>(callback), context, *static_cast<Components*>(rawComponents[Is])...);
+		}
+
+		template<typename... Components, typename Callback>
+		void invoke_with_components(Callback&& callback, Context& context, std::vector<void*>& rawComponents)
+		{
+			invoke_with_components_impl<Callback, Components...>(std::forward<Callback>(callback), context, rawComponents, std::make_index_sequence<sizeof...(Components)>());
+		}
+	} // namespace detail
+
 	class ISystemManager
 	{
 	public:
@@ -35,7 +36,9 @@ namespace ECS2
 	class SystemManager : private ISystemManager
 	{
 	public:
-		SystemManager(EntityManager& em) : m_entityManager(em) {}
+		SystemManager(EntityManager& em) 
+			: m_entityManager(em)
+			, m_context(*this, em) {}
 
 		template<typename... Components>
 		auto AddSystem(const std::string& name)
@@ -43,11 +46,13 @@ namespace ECS2
 			return SystemBuilder<Components...>(*this, name);
 		}
 
-		void Update() {
+		void Update()
+		{
 			for (const auto& system : m_systems)
 			{
-				for (auto* entity : m_entityManager.GetAll())
+				for (size_t entityIndex = 0; entityIndex < m_entityManager.GetAll().size(); ++entityIndex)
 				{
+					auto* entity = m_entityManager.GetAll()[entityIndex];
 					if (!entity->IsValid()) continue;
 
 					std::vector<void*> components;
@@ -67,7 +72,9 @@ namespace ECS2
 					}
 					if (hasAll && components.size() == system->GetFilters().size())
 					{
-						system->GetCallback()(components);
+						m_context.index = entityIndex;
+						m_context.entityID = entity->GetID();
+						system->GetCallback()(m_context, components);
 					}
 				}
 			}
@@ -76,6 +83,7 @@ namespace ECS2
 	private:
 		EntityManager& m_entityManager;
 		std::vector<std::unique_ptr<System>> m_systems;
+		Context m_context;
 
 		std::vector<std::unique_ptr<System>>& GetSystems() override
 		{
@@ -99,17 +107,45 @@ namespace ECS2
 			return *this;
 		}
 
-		ISystemManager& Each(std::function<void(Components&...)> callback)
+		template<typename Callback>
+		ISystemManager& Each(Callback&& callback)
 		{
-			m_system.SetCallback([callback](std::vector<void*>& rawComponents)
+			m_system.SetCallback([callback = std::forward<Callback>(callback)](Context& context, std::vector<void*>& rawComponents)
 				{
 					if constexpr (sizeof...(Components) > 0)
 					{
-						detail::invoke_with_components<Components...>(callback, rawComponents);
+						detail::invoke_with_components<Components...>(
+							[&callback](Context& inner_context, Components&... components) {
+								(void)inner_context;
+								std::invoke(callback, components...);
+							},
+							context, rawComponents);
 					}
 					else
 					{
-						callback();
+						std::invoke(callback);
+					}
+				});
+			m_manager.GetSystems().push_back(std::make_unique<System>(std::move(m_system)));
+			return m_manager;
+		}
+
+		template<typename Callback>
+		ISystemManager& Each(Callback&& callback, bool context_needed)
+		{
+			m_system.SetCallback([callback = std::forward<Callback>(callback)](Context& context, std::vector<void*>& rawComponents)
+				{
+					if constexpr (sizeof...(Components) > 0)
+					{
+						detail::invoke_with_components<Components...>(
+							[&callback](Context& inner_context, Components&... components) {
+								std::invoke(callback, inner_context, components...);
+							},
+							context, rawComponents);
+					}
+					else
+					{
+						std::invoke(callback, context);
 					}
 				});
 			m_manager.GetSystems().push_back(std::make_unique<System>(std::move(m_system)));
