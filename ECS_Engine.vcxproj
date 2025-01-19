@@ -142,7 +142,9 @@
     <ClInclude Include="ECS\src\core\EventBus.hpp" />
     <ClInclude Include="ECS\src\flecs alike\Entity.hpp" />
     <ClInclude Include="ECS\src\flecs alike\EntityManager.hpp" />
+    <ClInclude Include="ECS\src\flecs alike\ISystemManager.hpp" />
     <ClInclude Include="ECS\src\flecs alike\System.hpp" />
+    <ClInclude Include="ECS\src\flecs alike\SystemBuilder.hpp" />
     <ClInclude Include="ECS\src\flecs alike\SystemManager.hpp" />
     <ClInclude Include="Example\Example.h" />
     <ClInclude Include="ECS\src\core\Looper.hpp" />

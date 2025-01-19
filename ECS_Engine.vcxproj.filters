@@ -51,19 +51,25 @@
     <ClInclude Include="ECS\src\core\ECSManager.hpp">
       <Filter>Файлы заголовков\core</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\src\flecs alike\EntityManager.hpp">
-      <Filter>Файлы заголовков</Filter>
+    <ClInclude Include="Example\Example2.h">
+      <Filter>Файлы заголовков\example</Filter>
     </ClInclude>
     <ClInclude Include="ECS\src\flecs alike\Entity.hpp">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Файлы заголовков\flecs</Filter>
     </ClInclude>
-    <ClInclude Include="Example\Example2.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ECS\src\flecs alike\SystemManager.hpp">
-      <Filter>Файлы заголовков</Filter>
+    <ClInclude Include="ECS\src\flecs alike\EntityManager.hpp">
+      <Filter>Файлы заголовков\flecs</Filter>
     </ClInclude>
     <ClInclude Include="ECS\src\flecs alike\System.hpp">
+      <Filter>Файлы заголовков\flecs</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\src\flecs alike\SystemManager.hpp">
+      <Filter>Файлы заголовков\flecs</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\src\flecs alike\SystemBuilder.hpp">
+      <Filter>Файлы заголовков\flecs</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\src\flecs alike\ISystemManager.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

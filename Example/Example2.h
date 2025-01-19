@@ -35,8 +35,6 @@ public:
 			.Add<Velocity>(2, 2);
 
 		sm.AddSystem<Position, Velocity>("Move")
-			.With<Position>()
-			.With<Velocity>()
 			.Each(Move);
 
 		sm.AddSystem<Input>("Input")

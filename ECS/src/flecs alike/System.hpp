@@ -15,47 +15,20 @@ namespace ECS2
 		virtual void Execute() = 0;
 	};
 
-	template<typename... Components>
-	class System : public ISystem
+    class System 
 	{
-	public:
-		System(const std::string& name, EntityManager& entityManager)
-			: m_name(name), m_entityManager(entityManager) {
-		}
+    public:
+        using CallbackType = std::function<void(std::vector<void*>&)>;
 
-		void Each(std::function<void(Components&...)> callback)
-		{
-			m_callback = std::move(callback);
-		}
+        System(const std::string& name) : m_name(name) {}
 
-		template<typename Component>
-		System& With()
-		{
-			m_filters.push_back(typeid(Component));
-			return *this;
-		}
+        const std::string& GetName() const { return m_name; }
+        const std::vector<std::type_index>& GetFilters() const { return m_filters; }
 
-		void Execute() override
-		{
-			if (!m_callback)
-			{
-				return;
-			}
+        void SetCallback(CallbackType callback) { m_callback = std::move(callback); }
+        const CallbackType& GetCallback() const { return m_callback; }
 
-			for (auto* entity : m_entityManager.GetAll())
-			{
-				if (HasFilters(*entity) && HasAllComponents<Components...>(*entity))
-				{
-					m_callback(*entity->Get<Components>()...);
-				}
-			}
-		}
-
-	private:
-		std::string m_name;
-		std::function<void(Components&...)> m_callback;
-		EntityManager& m_entityManager;
-		std::vector<std::type_index> m_filters;
+        void AddFilter(std::type_index filter) { m_filters.push_back(filter); }
 
 		bool HasFilters(Entity& entity)
 		{
@@ -69,10 +42,9 @@ namespace ECS2
 			return true;
 		}
 
-		template<typename... Components>
-		bool HasAllComponents(const Entity& entity)
-		{
-			return (entity.Has<Components>() && ...);
-		}
-	};
+    private:
+        std::string m_name;
+        std::vector<std::type_index> m_filters;
+        CallbackType m_callback;
+    };
 } //namespace ECS2

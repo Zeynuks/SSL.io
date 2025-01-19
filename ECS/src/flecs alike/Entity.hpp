@@ -27,6 +27,14 @@ namespace ECS2
 				: nullptr;
 		}
 
+		void* Get(std::type_index componentType)
+		{
+			auto it = m_components.find(componentType);
+			return (it != m_components.end())
+				? it->second.get()
+				: nullptr;
+		}
+
 		template<typename Component>
 		bool Has() const
 		{
