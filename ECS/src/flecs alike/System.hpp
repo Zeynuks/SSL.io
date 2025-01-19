@@ -7,8 +7,15 @@
 
 namespace ECS2
 {
+	class ISystem
+	{
+	public:
+		virtual ~ISystem() = default;
+		virtual void Execute() = 0;
+	};
+
 	template<typename... Components>
-	class System
+	class System : public ISystem
 	{
 	public:
 		System(const std::string& name, EntityManager& entityManager)
@@ -17,11 +24,21 @@ namespace ECS2
 
 		void Each(std::function<void(Components&...)> callback)
 		{
+			m_callback = std::move(callback);
+		}
+
+		void Execute() override
+		{
+			if (!m_callback)
+			{
+				return;
+			}
+
 			for (auto* entity : m_entityManager.GetAll())
 			{
 				if (HasFilters(*entity) && HasAllComponents<Components...>(*entity))
 				{
-					callback(*entity->Get<Components>()...);
+					m_callback(*entity->Get<Components>()...);
 				}
 			}
 		}
@@ -32,8 +49,10 @@ namespace ECS2
 			m_filters.push_back(typeid(Component));
 			return *this;
 		}
+
 	private:
 		std::string m_name;
+		std::function<void(Components&...)> m_callback;
 		EntityManager& m_entityManager;
 		std::vector<std::type_index> m_filters;
 
@@ -55,4 +74,4 @@ namespace ECS2
 			return (entity.Has<Components>() && ...);
 		}
 	};
-}
+} //namespace ECS2

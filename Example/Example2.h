@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdio.h>
 #include "../ECS/src/flecs alike/EntityManager.hpp"
 #include "../ECS/src/flecs alike/SystemManager.hpp"
 
@@ -23,7 +22,7 @@ class Example2
 public:
 	void Start()
 	{
-		EntityManager em;
+		ECS2::EntityManager em;
 		ECS2::SystemManager sm(em);
 
 		em.CreateEntity()
@@ -45,5 +44,7 @@ public:
 				{
 					std::cout << "Hello World!" << std::endl;
 				});
+
+		sm.Update();
 	}
 };
