@@ -142,6 +142,7 @@
     <ClInclude Include="ECS\src\core\EventBus.hpp" />
     <ClInclude Include="ECS\src\flecs alike\Context.hpp" />
     <ClInclude Include="ECS\src\flecs alike\Entity.hpp" />
+    <ClInclude Include="ECS\src\flecs alike\EntityIterator.hpp" />
     <ClInclude Include="ECS\src\flecs alike\EntityManager.hpp" />
     <ClInclude Include="ECS\src\flecs alike\System.hpp" />
     <ClInclude Include="ECS\src\flecs alike\SystemManager.hpp" />

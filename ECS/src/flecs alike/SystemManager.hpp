@@ -36,9 +36,10 @@ namespace ECS2
 	class SystemManager : private ISystemManager
 	{
 	public:
-		SystemManager(EntityManager& em) 
+		SystemManager(EntityManager& em)
 			: m_entityManager(em)
-			, m_context(*this, em) {}
+			, m_context(*this, em) {
+		}
 
 		template<typename... Components>
 		auto AddSystem(const std::string& name)
@@ -48,13 +49,17 @@ namespace ECS2
 
 		void Update()
 		{
-			for (const auto& system : m_systems)
+			auto [begin, end] = m_entityManager.GetAllEntities();
+			if (begin == end)
 			{
-				for (size_t entityIndex = 0; entityIndex < m_entityManager.GetAll().size(); ++entityIndex)
-				{
-					auto* entity = m_entityManager.GetAll()[entityIndex];
-					if (!entity->IsValid()) continue;
+				return;
+			}
+			for (auto& entity = begin; entity != end; ++entity)
+			{
+				if (!entity->IsValid()) continue;
 
+				for (const auto& system : m_systems)
+				{
 					std::vector<void*> components;
 					components.reserve(system->GetFilters().size());
 					bool hasAll = true;
@@ -72,7 +77,7 @@ namespace ECS2
 					}
 					if (hasAll && components.size() == system->GetFilters().size())
 					{
-						m_context.index = entityIndex;
+						m_context.index = entity.GetIndex();
 						m_context.entityID = entity->GetID();
 						system->GetCallback()(m_context, components);
 					}
