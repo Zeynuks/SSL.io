@@ -42,7 +42,7 @@
     <ClInclude Include="Example\Example.h">
       <Filter>Файлы заголовков\example</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\src\core\Looper.hpp">
+    <ClInclude Include="ECS\src\flecs alike\Looper.hpp">
       <Filter>Файлы заголовков\core</Filter>
     </ClInclude>
     <ClInclude Include="ECS\src\core\Types.h">

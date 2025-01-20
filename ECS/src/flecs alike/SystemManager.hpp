@@ -38,7 +38,7 @@ namespace ECS2
 	public:
 		SystemManager(EntityManager& em)
 			: m_entityManager(em)
-			, m_context(*this, em) {
+			, m_context(em) {
 		}
 
 		template<typename... Components>
@@ -47,7 +47,7 @@ namespace ECS2
 			return SystemBuilder<Components...>(*this, name);
 		}
 
-		void Update()
+		void Update(float deltaTime)
 		{
 			auto [begin, end] = m_entityManager.GetAllEntities();
 			if (begin == end)
@@ -79,6 +79,7 @@ namespace ECS2
 					{
 						m_context.index = entity.GetIndex();
 						m_context.entityID = entity->GetID();
+						m_context.deltaTime = deltaTime;
 						system->GetCallback()(m_context, components);
 					}
 				}

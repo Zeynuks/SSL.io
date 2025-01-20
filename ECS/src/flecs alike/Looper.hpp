@@ -8,16 +8,16 @@
 #include <stdexcept>
 #include <functional>
 
-#include "Types.h"
 #include "SystemManager.hpp"
 
-namespace ECS
+namespace ECS2
 {
 	class Looper
 	{
-		using SystemManagersVector = std::vector<std::shared_ptr<SystemManager>>;
+		using Clock = std::chrono::high_resolution_clock;
+		using Duration = std::chrono::duration<float>;
 
-		SystemManagersVector m_systemManagers;
+		std::shared_ptr<SystemManager> m_systemManager;
 
 	public:
 		Looper(std::shared_ptr<SystemManager> systemManager)
@@ -27,25 +27,12 @@ namespace ECS
 				throw std::invalid_argument("Passing argument is nullptr. Looper requires at least one SystemManager");
 			}
 
-			m_systemManagers = { std::move(systemManager) };
-		}
-
-		Looper(SystemManagersVector systemManagers)
-		{
-			if (systemManagers.empty())
-			{
-				throw std::invalid_argument("Passing argument is an empty vector. Looper requires at least one SystemManager");
-			}
-
-			m_systemManagers = systemManagers;
+			m_systemManager = std::move(systemManager);
 		}
 
 		void RunFrame(float deltaTime)
 		{
-			for (const auto& systemManager : m_systemManagers)
-			{
-				systemManager->ExecuteAll();
-			}
+			m_systemManager->Update(deltaTime);
 		}
 
 		void RunLoop(std::optional<unsigned int> targetFPS = std::nullopt)
