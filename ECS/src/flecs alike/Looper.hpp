@@ -17,22 +17,14 @@ namespace ECS2
 		using Clock = std::chrono::high_resolution_clock;
 		using Duration = std::chrono::duration<float>;
 
-		std::shared_ptr<SystemManager> m_systemManager;
+		SystemManager& m_systemManager;
 
 	public:
-		Looper(std::shared_ptr<SystemManager> systemManager)
-		{
-			if (!systemManager)
-			{
-				throw std::invalid_argument("Passing argument is nullptr. Looper requires at least one SystemManager");
-			}
-
-			m_systemManager = std::move(systemManager);
-		}
+		Looper(SystemManager& systemManager) : m_systemManager(systemManager) {}
 
 		void RunFrame(float deltaTime)
 		{
-			m_systemManager->Update(deltaTime);
+			m_systemManager.Update(deltaTime);
 		}
 
 		void RunLoop(std::optional<unsigned int> targetFPS = std::nullopt)

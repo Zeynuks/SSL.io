@@ -11,7 +11,13 @@ struct render {};
 
 //components
 struct Velocity { float vx, vy; };
-struct Position { float x, y; };
+struct Position
+{
+	Position(float x, float y) : x(x), y(y) {}
+	Position(sf::Vector2f position) : x(position.x), y(position.y) {}
+
+	float x, y;
+};
 struct Renderable
 {
 	Renderable(sf::Color color) : rect({ 50, 50 })
@@ -66,7 +72,7 @@ void MoveCamera(Camera& c, Position& p)
 {
 	auto pos = sf::Vector2f(p.x, p.y);
 	auto& camera = c.camera;
-	camera.setCenter(camera.getCenter() + (pos - camera.getCenter()) * 0.1f);
+	camera.setCenter(camera.getCenter() + (pos - camera.getCenter()) * 0.005f);
 	c.window.setView(camera);
 }
 
@@ -77,7 +83,7 @@ public:
 	void Start()
 	{
 		ECS2::EntityManager em;
-		auto sm = std::make_shared<ECS2::SystemManager>(em);
+		ECS2::SystemManager sm(em);
 		ECS2::Looper looper(sm);
 
 		sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "ECS Example");
@@ -88,7 +94,7 @@ public:
 		auto& playerEntity = em.AtScope<render>()
 			.CreateEntity()
 			.Add<Velocity>(0.f, 0.f)
-			.Add<Position>(0.f, 0.f)
+			.Add<Position>(static_cast<sf::Vector2f>(window.getSize() / 2u))
 			.Add<Renderable>(sf::Color::Green)
 			.Add<Camera>(camera, window)
 			.Add<Input>();
@@ -101,16 +107,16 @@ public:
 			.Add<Position>(100.f, 100.f)
 			.Add<Renderable>(sf::Color::Red);
 
-		sm->AddSystem<Window>("Draw")
+		sm.AddSystem<Window>("Draw")
 			.Each(Draw, true);
 
-		sm->AddSystem<Position, Velocity>("Move")
+		sm.AddSystem<Position, Velocity>("Move")
 			.Each(Move, true);
 
-		sm->AddSystem<Input, Velocity>("HandleInput")
+		sm.AddSystem<Input, Velocity>("HandleInput")
 			.Each(HandleInput);
 
-		sm->AddSystem<Camera, Position>("MoveCamera")
+		sm.AddSystem<Camera, Position>("MoveCamera")
 			.Each(MoveCamera);
 
 		while (window.isOpen())
