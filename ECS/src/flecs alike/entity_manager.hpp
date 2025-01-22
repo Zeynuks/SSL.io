@@ -3,56 +3,56 @@
 #include <vector>
 #include <optional>
 
-#include "Entity.hpp"
-#include "EntityIterator.hpp"
+#include "entity.hpp"
+#include "iterator.hpp"
 
-namespace ECS2
+namespace ecs
 {
-	class EntityManager
+	class entity_manager
 	{
 	public:
-		template<typename ScopeType>
-		EntityManager& AtScope()
+		template<typename scope>
+		entity_manager& at_scope()
 		{
-			m_currentScope = typeid(ScopeType);
+			m_currentScope = typeid(scope);
 			return *this;
 		}
 
-		std::vector<Entity*>& GetAll()
+		std::vector<entity*>& all()
 		{
 			return (m_currentScope)
 				? m_scopes[*m_currentScope]
 				: m_scopes[m_defaultScope];
 		}
 
-		Entity& CreateEntity()
+		entity& create()
 		{
-			auto& entity = CreateEntityInternal();
+			auto& entity = create_internal();
 			(m_currentScope)
 				? m_scopes[*m_currentScope].push_back(&entity)
 				: m_scopes[m_defaultScope].push_back(&entity);
-			UpdateAllEntities();
+			update_all();
 			m_currentScope.reset();
 			return entity;
 		}
 
-		void RemoveInvalid()
+		void invalidate()
 		{
-			auto& entities = GetAll();
+			auto& entities = all();
 			entities.erase(
 				std::remove_if(entities.begin(), entities.end(),
-					[](Entity* e) { return !e->IsValid(); }),
+					[](entity* e) { return !e->is_valid(); }),
 				entities.end());
-			UpdateAllEntities();
+			update_all();
 			m_currentScope.reset();
 		}
 
-		std::pair<EntityIterator, EntityIterator> GetAllEntities()
+		std::pair<entity_iterator, entity_iterator> get_all_entities()
 		{
-			return { EntityIterator(m_allEntities), EntityIterator(m_allEntities, m_allEntities.size()) };
+			return { entity_iterator(m_allEntities), entity_iterator(m_allEntities, m_allEntities.size()) };
 		}
 
-		void Reset()
+		void reset()
 		{
 			m_entities.clear();
 			m_scopes.clear();
@@ -69,17 +69,17 @@ namespace ECS2
 
 		const std::type_index m_defaultScope = typeid(initial);
 		std::optional<std::type_index> m_currentScope;
-		std::vector<std::unique_ptr<Entity>> m_entities;
-		std::vector<Entity*> m_allEntities;
-		std::unordered_map<std::type_index, std::vector<Entity*>> m_scopes = { {m_defaultScope, {}} };
+		std::vector<std::unique_ptr<entity>> m_entities;
+		std::vector<entity*> m_allEntities;
+		std::unordered_map<std::type_index, std::vector<entity*>> m_scopes = { {m_defaultScope, {}} };
 
-		Entity& CreateEntityInternal()
+		entity& create_internal()
 		{
-			m_entities.emplace_back(std::make_unique<Entity>(m_nextID++));
+			m_entities.emplace_back(std::make_unique<entity>(m_nextID++));
 			return *m_entities.back();
 		}
 
-		void UpdateAllEntities()
+		void update_all()
 		{
 			m_allEntities.clear();
 			for (const auto& [_, entities] : m_scopes) {
@@ -87,4 +87,4 @@ namespace ECS2
 			}
 		}
 	};
-} //namespace ECS2
+} //namespace ecs

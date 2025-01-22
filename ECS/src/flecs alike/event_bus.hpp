@@ -30,8 +30,8 @@ namespace ECS
 		{
 			std::lock_guard<std::mutex> lock(m_mutex);
 
-			EventID id = std::type_index(typeid(EventType));
-			m_subscribers[id].push_back(
+			EventID ID = std::type_index(typeid(EventType));
+			m_subscribers[ID].push_back(
 				[callback](const Event& e) { callback(static_cast<const EventType&>(e)); }
 			);
 		}
@@ -42,8 +42,8 @@ namespace ECS
 			std::vector<HandlerType> handlers;
 			{
 				std::lock_guard<std::mutex> lock(m_mutex);
-				EventID id = std::type_index(typeid(EventType));
-				auto it = m_subscribers.find(id);
+				EventID ID = std::type_index(typeid(EventType));
+				auto it = m_subscribers.find(ID);
 				if (it != m_subscribers.end())
 				{
 					handlers = it->second;

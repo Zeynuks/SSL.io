@@ -1,20 +1,20 @@
 #pragma once
 
-namespace ECS2
-{
-	class ISystemManager;
+#include "entity_manager.hpp"
 
-	struct Context
+namespace ecs
+{
+	struct context
 	{
-		Context(EntityManager& entity) : m_entity(entity) {}
+		context(entity_manager& entity) : m_entity(entity) {}
 
 		size_t index = 0;
-		float deltaTime = 0;
-		size_t entityID = 0;
+		float delta_time = 0;
+		size_t ID = 0;
 
-		EntityManager& entity() { return m_entity; };
+		entity_manager& entity() { return m_entity; };
 
 	private:
-		EntityManager& m_entity;
+		entity_manager& m_entity;
 	};
-} //namespace ECS2
+} //namespace ecs

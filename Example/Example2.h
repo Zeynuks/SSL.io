@@ -1,9 +1,6 @@
 #pragma once
 
-#include "../ECS/src/flecs alike/EntityManager.hpp"
-#include "../ECS/src/flecs alike/SystemManager.hpp"
-#include "../ECS/src/flecs alike/Looper.hpp"
-
+#include "../ECS/ecs.hpp"
 #include "SFML/Graphics.hpp"
 
 //scopes
@@ -37,12 +34,12 @@ struct Camera { sf::View& camera; sf::RenderWindow& window; };
 struct Window { sf::RenderWindow& window; };
 
 //systems
-void Draw(ECS2::Context& ctx, Window& w)
+void Draw(ecs::context& ctx, Window& w)
 {
-	for (auto& entity : ctx.entity().AtScope<render>().GetAll())
+	for (auto& entity : ctx.entity().at_scope<render>().all())
 	{
-		auto pos = entity->Get<Position>();
-		auto rect = entity->Get<Renderable>();
+		auto pos = entity->get<Position>();
+		auto rect = entity->get<Renderable>();
 		if (pos && rect)
 		{
 			rect->rect.setPosition(pos->x, pos->y);
@@ -51,10 +48,10 @@ void Draw(ECS2::Context& ctx, Window& w)
 	}
 }
 
-void Move(ECS2::Context ctx, Position& p, Velocity& v)
+void Move(ecs::context ctx, Position& p, Velocity& v)
 {
-	p.x += v.vx * ctx.deltaTime;
-	p.y += v.vy * ctx.deltaTime;
+	p.x += v.vx * ctx.delta_time;
+	p.y += v.vy * ctx.delta_time;
 }
 
 void HandleInput(Input& input, Velocity& v)
@@ -76,48 +73,72 @@ void MoveCamera(Camera& c, Position& p)
 	c.window.setView(camera);
 }
 
+class A
+{
+public:
+	void DoWithContext(ecs::context ctx, Position& p)
+	{
+		std::cout << "context method of A was executed. Delta Time = " << ctx.delta_time << std::endl;
+	}
+
+	void DoWithoutContext(Position& p)
+	{
+		std::cout << "context method of A was executed " << m_count++ << " times" << std::endl;
+	}
+
+private:
+	size_t m_count = 0;
+};
+
 //game class
 class Example2
 {
 public:
 	void Start()
 	{
-		ECS2::EntityManager em;
-		ECS2::SystemManager sm(em);
-		ECS2::Looper looper(sm);
-
+		ecs::entity_manager em;
+		ecs::system_manager_impl sm(em);
+		ecs::looper looper(sm);
+		A a;
 		sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "ECS Example");
 		sf::View camera = window.getView();
 		sf::Event event{};
 		sf::Clock clock;
 
-		auto& playerEntity = em.AtScope<render>()
-			.CreateEntity()
-			.Add<Velocity>(0.f, 0.f)
-			.Add<Position>(static_cast<sf::Vector2f>(window.getSize() / 2u))
-			.Add<Renderable>(sf::Color::Green)
-			.Add<Camera>(camera, window)
-			.Add<Input>();
+		auto& playerEntity = em.at_scope<render>()
+			.create()
+			.add<Velocity>(0.f, 0.f)
+			.add<Position>(static_cast<sf::Vector2f>(window.getSize() / 2u))
+			.add<Renderable>(sf::Color::Green)
+			.add<Camera>(camera, window)
+			.add<Input>();
 
-		em.CreateEntity()
-			.Add<Window>(window);
+		//create entity in default scope
+		em.create()
+			.add<Window>(window);
 
-		em.AtScope<render>()
-			.CreateEntity()
-			.Add<Position>(100.f, 100.f)
-			.Add<Renderable>(sf::Color::Red);
+		em.at_scope<render>()
+			.create()
+			.add<Position>(100.f, 100.f)
+			.add<Renderable>(sf::Color::Red);
 
-		sm.AddSystem<Window>("Draw")
-			.Each(Draw, true);
+		sm.system<Window>("Draw")
+			.each(Draw, true);
 
-		sm.AddSystem<Position, Velocity>("Move")
-			.Each(Move, true);
+		sm.system<Position>("DoWithContext")
+			.each(&A::DoWithContext, a, true);
 
-		sm.AddSystem<Input, Velocity>("HandleInput")
-			.Each(HandleInput);
+		sm.system<Position>("DoWithoutContext")
+			.each(&A::DoWithoutContext, a);
 
-		sm.AddSystem<Camera, Position>("MoveCamera")
-			.Each(MoveCamera);
+		sm.system<Position, Velocity>("Move")
+			.each(Move, true);
+
+		sm.system<Input, Velocity>("HandleInput")
+			.each(HandleInput);
+
+		sm.system<Camera, Position>("MoveCamera")
+			.each(MoveCamera);
 
 		while (window.isOpen())
 		{
@@ -126,23 +147,23 @@ public:
 				if (event.type == sf::Event::Closed) window.close();
 				if (event.type == sf::Event::KeyPressed)
 				{
-					if (event.key.code == sf::Keyboard::A) playerEntity.Get<Input>()->moveLeft = true;
-					if (event.key.code == sf::Keyboard::D) playerEntity.Get<Input>()->moveRight = true;
-					if (event.key.code == sf::Keyboard::W) playerEntity.Get<Input>()->moveUp = true;
-					if (event.key.code == sf::Keyboard::S) playerEntity.Get<Input>()->moveDown = true;
+					if (event.key.code == sf::Keyboard::A) playerEntity.get<Input>()->moveLeft = true;
+					if (event.key.code == sf::Keyboard::D) playerEntity.get<Input>()->moveRight = true;
+					if (event.key.code == sf::Keyboard::W) playerEntity.get<Input>()->moveUp = true;
+					if (event.key.code == sf::Keyboard::S) playerEntity.get<Input>()->moveDown = true;
 				}
 				if (event.type == sf::Event::KeyReleased)
 				{
-					if (event.key.code == sf::Keyboard::A) playerEntity.Get<Input>()->moveLeft = false;
-					if (event.key.code == sf::Keyboard::D) playerEntity.Get<Input>()->moveRight = false;
-					if (event.key.code == sf::Keyboard::W) playerEntity.Get<Input>()->moveUp = false;
-					if (event.key.code == sf::Keyboard::S) playerEntity.Get<Input>()->moveDown = false;
+					if (event.key.code == sf::Keyboard::A) playerEntity.get<Input>()->moveLeft = false;
+					if (event.key.code == sf::Keyboard::D) playerEntity.get<Input>()->moveRight = false;
+					if (event.key.code == sf::Keyboard::W) playerEntity.get<Input>()->moveUp = false;
+					if (event.key.code == sf::Keyboard::S) playerEntity.get<Input>()->moveDown = false;
 				}
 			}
 
 			float dt = clock.restart().asSeconds();
 			window.clear();
-			looper.RunFrame(dt);
+			looper.frame(dt);
 			window.display();
 		}
 	}

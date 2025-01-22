@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Файлы заголовков\core">
-      <UniqueIdentifier>{be0a660b-ba15-4714-b819-b81203faf98e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Файлы заголовков\example">
       <UniqueIdentifier>{e50208e3-4f4d-4729-84a7-acfb6af7b50c}</UniqueIdentifier>
     </Filter>
@@ -24,52 +21,34 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ECS\Engine.hpp">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ECS\src\core\ComponentArray.hpp">
-      <Filter>Файлы заголовков\core</Filter>
-    </ClInclude>
-    <ClInclude Include="ECS\src\core\EventBus.hpp">
-      <Filter>Файлы заголовков\core</Filter>
-    </ClInclude>
-    <ClInclude Include="ECS\src\core\System.hpp">
-      <Filter>Файлы заголовков\core</Filter>
-    </ClInclude>
-    <ClInclude Include="ECS\src\core\SystemManager.hpp">
-      <Filter>Файлы заголовков\core</Filter>
-    </ClInclude>
-    <ClInclude Include="Example\Example.h">
-      <Filter>Файлы заголовков\example</Filter>
-    </ClInclude>
-    <ClInclude Include="ECS\src\flecs alike\Looper.hpp">
-      <Filter>Файлы заголовков\core</Filter>
-    </ClInclude>
-    <ClInclude Include="ECS\src\core\Types.h">
-      <Filter>Файлы заголовков\core</Filter>
-    </ClInclude>
-    <ClInclude Include="ECS\src\core\ECSManager.hpp">
-      <Filter>Файлы заголовков\core</Filter>
-    </ClInclude>
     <ClInclude Include="Example\Example2.h">
       <Filter>Файлы заголовков\example</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\src\flecs alike\Entity.hpp">
+    <ClInclude Include="ECS\src\flecs alike\entity.hpp">
       <Filter>Файлы заголовков\flecs</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\src\flecs alike\EntityManager.hpp">
+    <ClInclude Include="ECS\src\flecs alike\entity_manager.hpp">
       <Filter>Файлы заголовков\flecs</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\src\flecs alike\System.hpp">
+    <ClInclude Include="ECS\src\flecs alike\system.hpp">
       <Filter>Файлы заголовков\flecs</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\src\flecs alike\SystemManager.hpp">
+    <ClInclude Include="ECS\src\flecs alike\system_manager.hpp">
       <Filter>Файлы заголовков\flecs</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\src\flecs alike\Context.hpp">
-      <Filter>Файлы заголовков</Filter>
+    <ClInclude Include="ECS\src\flecs alike\looper.hpp">
+      <Filter>Файлы заголовков\flecs</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\src\flecs alike\EntityIterator.hpp">
+    <ClInclude Include="ECS\src\flecs alike\context.hpp">
+      <Filter>Файлы заголовков\flecs</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\src\flecs alike\iterator.hpp">
+      <Filter>Файлы заголовков\flecs</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\src\flecs alike\event_bus.hpp">
+      <Filter>Файлы заголовков\flecs</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\ecs.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

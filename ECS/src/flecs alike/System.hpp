@@ -4,35 +4,35 @@
 #include <vector>
 #include <typeindex>
 
-#include "Context.hpp"
+#include "context.hpp"
 
-namespace ECS2
+namespace ecs
 {
-	class ISystem
+	class system
 	{
 	public:
-		virtual ~ISystem() = default;
+		virtual ~system() = default;
 		virtual void Execute() = 0;
 	};
 
-	class System
+	class system_impl
 	{
 	public:
-		using CallbackType = std::function<void(Context&, std::vector<void*>&)>;
+		using CallbackType = std::function<void(context&, std::vector<void*>&)>;
 
-		System(const std::string& name) : m_name(name) {}
+		system_impl(const std::string& name) : m_name(name) {}
 
-		const std::string& GetName() const { return m_name; }
-		const std::vector<std::type_index>& GetFilters() const { return m_filters; }
+		const std::string& get_name() const { return m_name; }
+		const std::vector<std::type_index>& get_filters() const { return m_filters; }
 
-		void SetCallback(CallbackType callback) { m_callback = std::move(callback); }
-		const CallbackType& GetCallback() const { return m_callback; }
+		void set_callback(CallbackType callback) { m_callback = std::move(callback); }
+		const CallbackType& get_callback() const { return m_callback; }
 
-		void AddFilter(std::type_index filter) { m_filters.push_back(filter); }
+		void add_filter(std::type_index filter) { m_filters.push_back(filter); }
 
 	private:
 		std::string m_name;
 		std::vector<std::type_index> m_filters;
 		CallbackType m_callback;
 	};
-} //namespace ECS2
+} //namespace ecs

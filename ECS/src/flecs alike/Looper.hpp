@@ -8,26 +8,26 @@
 #include <stdexcept>
 #include <functional>
 
-#include "SystemManager.hpp"
+#include "system_manager.hpp"
 
-namespace ECS2
+namespace ecs
 {
-	class Looper
+	class looper
 	{
 		using Clock = std::chrono::high_resolution_clock;
 		using Duration = std::chrono::duration<float>;
 
-		SystemManager& m_systemManager;
+		system_manager_impl& m_systemManager;
 
 	public:
-		Looper(SystemManager& systemManager) : m_systemManager(systemManager) {}
+		looper(system_manager_impl& systemManager) : m_systemManager(systemManager) {}
 
-		void RunFrame(float deltaTime)
+		void frame(float delta_time)
 		{
-			m_systemManager.Update(deltaTime);
+			m_systemManager.update(delta_time);
 		}
 
-		void RunLoop(std::optional<unsigned int> targetFPS = std::nullopt)
+		void loop(std::optional<unsigned int> targetFPS = std::nullopt)
 		{
 			auto frameDuration = targetFPS.has_value()
 				? Duration(1.0f / targetFPS.value())
@@ -37,8 +37,8 @@ namespace ECS2
 			{
 				auto startTime = Clock::now();
 
-				float deltaTime = std::chrono::duration_cast<Duration>(Clock::now() - startTime).count();
-				RunFrame(deltaTime);
+				float delta_time = std::chrono::duration_cast<Duration>(Clock::now() - startTime).count();
+				frame(delta_time);
 
 				if (targetFPS.has_value())
 				{

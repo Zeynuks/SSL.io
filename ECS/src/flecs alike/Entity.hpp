@@ -4,30 +4,30 @@
 #include <typeindex>
 #include <unordered_map>
 
-namespace ECS2
+namespace ecs
 {
-	class Entity
+	class entity
 	{
 	public:
-		Entity(size_t ID) : m_ID(ID), valid(true) {}
+		entity(size_t ID) : m_ID(ID), valid(true) {}
 
 		template<typename T, typename... Args>
-		Entity& Add(Args&&... args)
+		entity& add(Args&&... args)
 		{
 			m_components[typeid(T)] = std::make_shared<T>(std::forward<Args>(args)...);
 			return *this;
 		}
 
-		template<typename Component>
-		Component* Get()
+		template<typename component>
+		component* get()
 		{
-			auto it = m_components.find(typeid(Component));
+			auto it = m_components.find(typeid(component));
 			return (it != m_components.end())
-				? static_cast<Component*>(it->second.get())
+				? static_cast<component*>(it->second.get())
 				: nullptr;
 		}
 
-		void* Get(std::type_index componentType)
+		void* get(std::type_index componentType)
 		{
 			auto it = m_components.find(componentType);
 			return (it != m_components.end())
@@ -35,24 +35,24 @@ namespace ECS2
 				: nullptr;
 		}
 
-		template<typename Component>
-		bool Has() const
+		template<typename component>
+		bool has() const
 		{
-			return m_components.find(typeid(Component)) != m_components.end();
+			return m_components.find(typeid(component)) != m_components.end();
 		}
 
-		bool Has(std::type_index component) const
+		bool has(std::type_index component) const
 		{
 			return m_components.find(component) != m_components.end();
 		}
 
-		void Destruct()
+		void destruct()
 		{
 			valid = false;
 		}
 
-		size_t GetID() const { return m_ID; }
-		bool IsValid() const { return valid; }
+		size_t ID() const { return m_ID; }
+		bool is_valid() const { return valid; }
 
 	private:
 		size_t m_ID;
@@ -60,4 +60,4 @@ namespace ECS2
 
 		std::unordered_map<std::type_index, std::shared_ptr<void>> m_components;
 	};
-} //namespace ECS2
+} //namespace ecs
