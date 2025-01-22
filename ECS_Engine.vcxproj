@@ -135,14 +135,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ECS\ecs.hpp" />
-    <ClInclude Include="ECS\src\flecs alike\event_bus.hpp" />
-    <ClInclude Include="ECS\src\flecs alike\context.hpp" />
-    <ClInclude Include="ECS\src\flecs alike\entity.hpp" />
-    <ClInclude Include="ECS\src\flecs alike\iterator.hpp" />
-    <ClInclude Include="ECS\src\flecs alike\entity_manager.hpp" />
-    <ClInclude Include="ECS\src\flecs alike\system.hpp" />
-    <ClInclude Include="ECS\src\flecs alike\system_manager.hpp" />
-    <ClInclude Include="ECS\src\flecs alike\looper.hpp" />
+    <ClInclude Include="ECS\src\flecs_alike\event_bus.hpp" />
+    <ClInclude Include="ECS\src\flecs_alike\context.hpp" />
+    <ClInclude Include="ECS\src\flecs_alike\entity.hpp" />
+    <ClInclude Include="ECS\src\flecs_alike\iterator.hpp" />
+    <ClInclude Include="ECS\src\flecs_alike\entity_manager.hpp" />
+    <ClInclude Include="ECS\src\flecs_alike\system.hpp" />
+    <ClInclude Include="ECS\src\flecs_alike\system_manager.hpp" />
+    <ClInclude Include="ECS\src\flecs_alike\looper.hpp" />
     <ClInclude Include="Example\Example2.h" />
   </ItemGroup>
   <ItemGroup>
