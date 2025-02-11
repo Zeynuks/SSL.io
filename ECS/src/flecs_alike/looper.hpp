@@ -14,13 +14,13 @@ namespace ecs
 {
 	class looper
 	{
-		using Clock = std::chrono::high_resolution_clock;
-		using Duration = std::chrono::duration<float>;
+		using clock = std::chrono::high_resolution_clock;
+		using duration = std::chrono::duration<float>;
 
-		system_manager_impl& m_systemManager;
+		system_manager& m_systemManager;
 
 	public:
-		looper(system_manager_impl& systemManager) : m_systemManager(systemManager) {}
+		looper(system_manager& systemManager) : m_systemManager(systemManager) {}
 
 		void frame(float delta_time)
 		{
@@ -30,19 +30,19 @@ namespace ecs
 		void loop(std::optional<unsigned int> targetFPS = std::nullopt)
 		{
 			auto frameDuration = targetFPS.has_value()
-				? Duration(1.0f / targetFPS.value())
-				: Duration(0);
+				? duration(1.0f / targetFPS.value())
+				: duration(0);
 
 			while (true)
 			{
-				auto startTime = Clock::now();
+				auto startTime = clock::now();
 
-				float delta_time = std::chrono::duration_cast<Duration>(Clock::now() - startTime).count();
+				float delta_time = std::chrono::duration_cast<duration>(clock::now() - startTime).count();
 				frame(delta_time);
 
 				if (targetFPS.has_value())
 				{
-					auto elapsedTime = Clock::now() - startTime;
+					auto elapsedTime = clock::now() - startTime;
 					auto sleepDuration = frameDuration - elapsedTime;
 
 					if (sleepDuration > std::chrono::milliseconds(0))

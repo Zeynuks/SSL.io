@@ -8,13 +8,9 @@
 
 namespace ecs
 {
-	class system
-	{
-	public:
-		virtual ~system() = default;
-		virtual void Execute() = 0;
-	};
-
+	/**
+	* @brief Класс системы
+	*/
 	class system_impl
 	{
 	public:

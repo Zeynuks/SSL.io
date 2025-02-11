@@ -48,7 +48,7 @@ void Draw(ecs::context& ctx, Window& w)
 	}
 }
 
-void Move(ecs::context ctx, Position& p, Velocity& v)
+void Move(ecs::context& ctx, Position& p, Velocity& v)
 {
 	p.x += v.vx * ctx.delta_time;
 	p.y += v.vy * ctx.delta_time;
@@ -69,21 +69,21 @@ void MoveCamera(Camera& c, Position& p)
 {
 	auto pos = sf::Vector2f(p.x, p.y);
 	auto& camera = c.camera;
-	camera.setCenter(camera.getCenter() + (pos - camera.getCenter()) * 0.005f);
+	camera.setCenter(camera.getCenter() + (pos - camera.getCenter()) * 0.01f);
 	c.window.setView(camera);
 }
 
 class A
 {
 public:
-	void DoWithContext(ecs::context ctx, Position& p)
+	void DoWithContext(ecs::context& ctx, Position& p)
 	{
-		std::cout << "context method of A was executed. Delta Time = " << ctx.delta_time << std::endl;
+		std::cout << "Context method of A was executed. Delta Time = " << ctx.delta_time << std::endl;
 	}
 
 	void DoWithoutContext(Position& p)
 	{
-		std::cout << "context method of A was executed " << m_count++ << " times" << std::endl;
+		std::cout << "No context method of A was executed " << m_count++ << " times" << std::endl;
 	}
 
 private:
@@ -91,15 +91,16 @@ private:
 };
 
 //game class
-class Example2
+class ExampleGame
 {
 public:
 	void Start()
 	{
 		ecs::entity_manager em;
-		ecs::system_manager_impl sm(em);
+		ecs::system_manager sm(em);
 		ecs::looper looper(sm);
 		A a;
+
 		sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "ECS Example");
 		sf::View camera = window.getView();
 		sf::Event event{};

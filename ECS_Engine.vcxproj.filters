@@ -21,7 +21,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Example\Example2.h">
+    <ClInclude Include="Example\ExampleGame.h">
       <Filter>Файлы заголовков\example</Filter>
     </ClInclude>
     <ClInclude Include="ECS\src\flecs_alike\entity.hpp">

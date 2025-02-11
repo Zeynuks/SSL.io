@@ -1,11 +1,11 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "Example/Example2.h"
+#include "Example/ExampleGame.h"
 
 int main()
 {
-	Example2 example;
+	ExampleGame example;
 	example.Start();
 
 	return EXIT_SUCCESS;

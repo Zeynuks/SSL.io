@@ -8,9 +8,16 @@
 
 namespace ecs
 {
+	/**
+	* @brief Класс для работы с коллекцией сущностей.
+	*/
 	class entity_manager
 	{
 	public:
+		/**
+		* @brief Метод для установки диапазона сущностей.
+		* @brief Можно указать новый диапазон или уже существующий.
+		*/
 		template<typename scope>
 		entity_manager& at_scope()
 		{
@@ -18,6 +25,10 @@ namespace ecs
 			return *this;
 		}
 
+		/**
+		* @brief Возвращает все сущности в выбранном диапазоне.
+		* @see ecs::entity_manager::at_scope()
+		*/
 		std::vector<entity*>& all()
 		{
 			return (m_currentScope)
@@ -25,6 +36,11 @@ namespace ecs
 				: m_scopes[m_defaultScope];
 		}
 
+		/**
+		* @brief Создаёт новую сущность в выбранном диапазоне.
+		* @brief Если диапазон не указан - создаёт сущность в стандартном диапазоне.
+		* @see ecs::entity_manager::at_scope()
+		*/
 		entity& create()
 		{
 			auto& entity = create_internal();
@@ -36,22 +52,36 @@ namespace ecs
 			return entity;
 		}
 
+		/**
+		* @brief Удаляет все невалидные сущности из коллекции.
+		*/
 		void invalidate()
 		{
 			auto& entities = all();
-			entities.erase(
-				std::remove_if(entities.begin(), entities.end(),
-					[](entity* e) { return !e->is_valid(); }),
-				entities.end());
+			for (auto& [_, entities] : m_scopes)
+			{
+				entities.erase(
+					std::remove_if(entities.begin(), entities.end(),
+						[](entity* e) { return !e->is_valid(); }),
+					entities.end());
+			}
 			update_all();
 			m_currentScope.reset();
 		}
 
+		/**
+		* @brief Метод возвращает пару итераторов, указывающих на начало и конец коллекции сущностей.
+		* @brief Метод позволяет перебрать всю коллекцию сущностей, независимо от выбранного диапазона.
+		*/
 		std::pair<entity_iterator, entity_iterator> get_all_entities()
 		{
 			return { entity_iterator(m_allEntities), entity_iterator(m_allEntities, m_allEntities.size()) };
 		}
 
+		/**
+		* @brief Очищает коллекцию сущностей и переводит класс в начальное состояние.
+		* @brief Работа метода не зависит от выбранного диапазона.
+		*/
 		void reset()
 		{
 			m_entities.clear();

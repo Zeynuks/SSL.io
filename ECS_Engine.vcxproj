@@ -143,7 +143,7 @@
     <ClInclude Include="ECS\src\flecs_alike\system.hpp" />
     <ClInclude Include="ECS\src\flecs_alike\system_manager.hpp" />
     <ClInclude Include="ECS\src\flecs_alike\looper.hpp" />
-    <ClInclude Include="Example\Example2.h" />
+    <ClInclude Include="Example\ExampleGame.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
