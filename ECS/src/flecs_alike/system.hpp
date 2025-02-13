@@ -1,34 +1,36 @@
 #pragma once
 
 #include <string>
-#include <vector>
 #include <typeindex>
+#include <vector>
 
 #include "context.hpp"
 
 namespace ecs
 {
-	/**
-	* @brief Класс системы
-	*/
-	class system_impl
+/**
+ * @brief Класс системы
+ */
+class system_impl
+{
+public:
+	using callback_type = std::function<void(context&, std::vector<void*>&)>;
+
+	system_impl(std::string name)
+		: m_name(std::move(name))
 	{
-	public:
-		using CallbackType = std::function<void(context&, std::vector<void*>&)>;
+	}
 
-		system_impl(const std::string& name) : m_name(name) {}
+	const std::vector<std::type_index>& filters() const { return m_filters; }
 
-		const std::string& get_name() const { return m_name; }
-		const std::vector<std::type_index>& get_filters() const { return m_filters; }
+	void callback(callback_type __fn) { m_callback = std::move(__fn); }
+	const callback_type& callback() const { return m_callback; }
 
-		void set_callback(CallbackType callback) { m_callback = std::move(callback); }
-		const CallbackType& get_callback() const { return m_callback; }
+	void add_filter(std::type_index filter) { m_filters.push_back(filter); }
 
-		void add_filter(std::type_index filter) { m_filters.push_back(filter); }
-
-	private:
-		std::string m_name;
-		std::vector<std::type_index> m_filters;
-		CallbackType m_callback;
-	};
-} //namespace ecs
+private:
+	std::string m_name;
+	std::vector<std::type_index> m_filters;
+	callback_type m_callback;
+};
+} // namespace ecs

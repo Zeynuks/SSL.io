@@ -2,22 +2,37 @@
 
 #include "../ECS/ecs.hpp"
 #include "SFML/Graphics.hpp"
+#include <iostream>
 
-//scopes
-struct render {};
+// scopes
+struct render
+{
+};
 
-//components
-struct Velocity { float vx, vy; };
+// components
+struct Velocity
+{
+	float vx, vy;
+};
 struct Position
 {
-	Position(float x, float y) : x(x), y(y) {}
-	Position(sf::Vector2f position) : x(position.x), y(position.y) {}
+	Position(float x, float y)
+		: x(x)
+		, y(y)
+	{
+	}
+	Position(sf::Vector2f position)
+		: x(position.x)
+		, y(position.y)
+	{
+	}
 
 	float x, y;
 };
 struct Renderable
 {
-	Renderable(sf::Color color) : rect({ 50, 50 })
+	Renderable(sf::Color color)
+		: rect({ 50, 50 })
 	{
 		rect.setFillColor(color);
 	}
@@ -30,10 +45,17 @@ struct Input
 	bool moveUp = false;
 	bool moveDown = false;
 };
-struct Camera { sf::View& camera; sf::RenderWindow& window; };
-struct Window { sf::RenderWindow& window; };
+struct Camera
+{
+	sf::View& camera;
+	sf::RenderWindow& window;
+};
+struct Window
+{
+	sf::RenderWindow& window;
+};
 
-//systems
+// systems
 void Draw(ecs::context& ctx, Window& w)
 {
 	for (auto& entity : ctx.entity().at_scope<render>().all())
@@ -59,10 +81,14 @@ void HandleInput(Input& input, Velocity& v)
 	v.vx = 0.f;
 	v.vy = 0.f;
 
-	if (input.moveLeft) v.vx -= 500.f;
-	if (input.moveRight) v.vx += 500.f;
-	if (input.moveUp) v.vy -= 500.f;
-	if (input.moveDown) v.vy += 500.f;
+	if (input.moveLeft)
+		v.vx -= 500.f;
+	if (input.moveRight)
+		v.vx += 500.f;
+	if (input.moveUp)
+		v.vy -= 500.f;
+	if (input.moveDown)
+		v.vy += 500.f;
 }
 
 void MoveCamera(Camera& c, Position& p)
@@ -90,7 +116,7 @@ private:
 	size_t m_count = 0;
 };
 
-//game class
+// game class
 class ExampleGame
 {
 public:
@@ -107,14 +133,14 @@ public:
 		sf::Clock clock;
 
 		auto& playerEntity = em.at_scope<render>()
-			.create()
-			.add<Velocity>(0.f, 0.f)
-			.add<Position>(static_cast<sf::Vector2f>(window.getSize() / 2u))
-			.add<Renderable>(sf::Color::Green)
-			.add<Camera>(camera, window)
-			.add<Input>();
+								 .create()
+								 .add<Velocity>(0.f, 0.f)
+								 .add<Position>(static_cast<sf::Vector2f>(window.getSize() / 2u))
+								 .add<Renderable>(sf::Color::Green)
+								 .add<Camera>(camera, window)
+								 .add<Input>();
 
-		//create entity in default scope
+		// create entity in default scope
 		em.create()
 			.add<Window>(window);
 
@@ -145,20 +171,29 @@ public:
 		{
 			while (window.pollEvent(event))
 			{
-				if (event.type == sf::Event::Closed) window.close();
+				if (event.type == sf::Event::Closed)
+					window.close();
 				if (event.type == sf::Event::KeyPressed)
 				{
-					if (event.key.code == sf::Keyboard::A) playerEntity.get<Input>()->moveLeft = true;
-					if (event.key.code == sf::Keyboard::D) playerEntity.get<Input>()->moveRight = true;
-					if (event.key.code == sf::Keyboard::W) playerEntity.get<Input>()->moveUp = true;
-					if (event.key.code == sf::Keyboard::S) playerEntity.get<Input>()->moveDown = true;
+					if (event.key.code == sf::Keyboard::A)
+						playerEntity.get<Input>()->moveLeft = true;
+					if (event.key.code == sf::Keyboard::D)
+						playerEntity.get<Input>()->moveRight = true;
+					if (event.key.code == sf::Keyboard::W)
+						playerEntity.get<Input>()->moveUp = true;
+					if (event.key.code == sf::Keyboard::S)
+						playerEntity.get<Input>()->moveDown = true;
 				}
 				if (event.type == sf::Event::KeyReleased)
 				{
-					if (event.key.code == sf::Keyboard::A) playerEntity.get<Input>()->moveLeft = false;
-					if (event.key.code == sf::Keyboard::D) playerEntity.get<Input>()->moveRight = false;
-					if (event.key.code == sf::Keyboard::W) playerEntity.get<Input>()->moveUp = false;
-					if (event.key.code == sf::Keyboard::S) playerEntity.get<Input>()->moveDown = false;
+					if (event.key.code == sf::Keyboard::A)
+						playerEntity.get<Input>()->moveLeft = false;
+					if (event.key.code == sf::Keyboard::D)
+						playerEntity.get<Input>()->moveRight = false;
+					if (event.key.code == sf::Keyboard::W)
+						playerEntity.get<Input>()->moveUp = false;
+					if (event.key.code == sf::Keyboard::S)
+						playerEntity.get<Input>()->moveDown = false;
 				}
 			}
 

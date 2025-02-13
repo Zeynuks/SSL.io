@@ -1,56 +1,59 @@
 #pragma once
 
-#include <vector>
 #include <chrono>
-#include <thread>
+#include <functional>
 #include <memory>
 #include <optional>
 #include <stdexcept>
-#include <functional>
+#include <thread>
+#include <vector>
 
 #include "system_manager.hpp"
 
 namespace ecs
 {
-	class looper
+class looper
+{
+	using clock = std::chrono::high_resolution_clock;
+	using duration = std::chrono::duration<float>;
+
+	system_manager& m_manager;
+
+public:
+	looper(system_manager& manager)
+		: m_manager(manager)
 	{
-		using clock = std::chrono::high_resolution_clock;
-		using duration = std::chrono::duration<float>;
+	}
 
-		system_manager& m_systemManager;
+	void frame(float delta_time)
+	{
+		m_manager.update(delta_time);
+	}
 
-	public:
-		looper(system_manager& systemManager) : m_systemManager(systemManager) {}
+	void loop(std::optional<unsigned int> targetFPS = std::nullopt)
+	{
+		auto frameDuration = targetFPS.has_value()
+			? duration(1.0f / targetFPS.value())
+			: duration(0);
 
-		void frame(float delta_time)
+		while (true)
 		{
-			m_systemManager.update(delta_time);
-		}
+			auto startTime = clock::now();
 
-		void loop(std::optional<unsigned int> targetFPS = std::nullopt)
-		{
-			auto frameDuration = targetFPS.has_value()
-				? duration(1.0f / targetFPS.value())
-				: duration(0);
+			float delta_time = std::chrono::duration_cast<duration>(clock::now() - startTime).count();
+			frame(delta_time);
 
-			while (true)
+			if (targetFPS.has_value())
 			{
-				auto startTime = clock::now();
+				auto elapsedTime = clock::now() - startTime;
+				auto sleepDuration = frameDuration - elapsedTime;
 
-				float delta_time = std::chrono::duration_cast<duration>(clock::now() - startTime).count();
-				frame(delta_time);
-
-				if (targetFPS.has_value())
+				if (sleepDuration > std::chrono::milliseconds(0))
 				{
-					auto elapsedTime = clock::now() - startTime;
-					auto sleepDuration = frameDuration - elapsedTime;
-
-					if (sleepDuration > std::chrono::milliseconds(0))
-					{
-						std::this_thread::sleep_for(sleepDuration);
-					}
+					std::this_thread::sleep_for(sleepDuration);
 				}
 			}
 		}
-	};
-} // namespace ECS
+	}
+};
+} // namespace ecs

@@ -42,13 +42,13 @@
     <ClInclude Include="ECS\src\flecs_alike\context.hpp">
       <Filter>Файлы заголовков\flecs</Filter>
     </ClInclude>
-    <ClInclude Include="ECS\src\flecs_alike\iterator.hpp">
-      <Filter>Файлы заголовков\flecs</Filter>
-    </ClInclude>
     <ClInclude Include="ECS\src\flecs_alike\event_bus.hpp">
       <Filter>Файлы заголовков\flecs</Filter>
     </ClInclude>
     <ClInclude Include="ECS\ecs.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS\src\flecs_alike\iterator.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
@@ -56,5 +56,8 @@
     <ClCompile Include="main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
   </ItemGroup>
 </Project>
